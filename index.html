@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CineVault – Movie Collection Manager</title>
+  <meta name="description" content="CineVault keeps your movie collection in a C singly linked list, saved to movies.dat.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%23140F0C'/%3E%3Crect x='8' y='7' width='16' height='18' rx='2' fill='%236EC5C0'/%3E%3Crect x='2' y='5' width='3' height='4' rx='1' fill='%233B322C'/%3E%3Crect x='2' y='14' width='3' height='4' rx='1' fill='%233B322C'/%3E%3Crect x='2' y='23' width='3' height='4' rx='1' fill='%233B322C'/%3E%3Crect x='27' y='5' width='3' height='4' rx='1' fill='%233B322C'/%3E%3Crect x='27' y='14' width='3' height='4' rx='1' fill='%233B322C'/%3E%3Crect x='27' y='23' width='3' height='4' rx='1' fill='%233B322C'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <p class="offline" id="offline" hidden>
+    Can't reach the CineVault server. Start <code>cinevault</code> from the CineVault folder, then reload this page.
+  </p>
+
+  <header class="masthead wrap">
+    <h1 class="wordmark">CineVault</h1>
+    <p class="tagline">Movie collection manager</p>
+    <p class="summary" id="summary" aria-live="polite">Loading your collection…</p>
+  </header>
+
+  <section class="reel" aria-labelledby="reel-title">
+    <div class="wrap reel-intro">
+      <h2 id="reel-title">The collection in memory</h2>
+      <p>
+        Each frame is one node of the singly linked list, in the order the movies were added.
+        The arrow after a frame is its <em>next</em> pointer. Addresses come straight from the C server<span id="node-size"></span>.
+      </p>
+    </div>
+    <div class="strip" id="strip" tabindex="0" role="region" aria-label="Linked list of movies. Scroll sideways to see every node.">
+      <ol class="track" id="track"></ol>
+    </div>
+  </section>
+
+  <main class="wrap workspace">
+    <section class="editor" id="editor" aria-labelledby="form-title">
+      <h2 id="form-title">Add a movie</h2>
+      <form id="movie-form" novalidate>
+        <div class="field">
+          <label for="title">Title</label>
+          <input id="title" name="title" maxlength="99" autocomplete="off" required aria-describedby="title-error">
+          <p class="error" id="title-error"></p>
+        </div>
+
+        <div class="field">
+          <label for="genre">Genre</label>
+          <input id="genre" name="genre" list="genre-options" maxlength="49" autocomplete="off" required aria-describedby="genre-error">
+          <datalist id="genre-options"></datalist>
+          <p class="error" id="genre-error"></p>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="year">Release year</label>
+            <input id="year" name="year" type="number" inputmode="numeric" min="1888" step="1" required aria-describedby="year-error">
+            <p class="error" id="year-error"></p>
+          </div>
+          <div class="field">
+            <label for="rating">Rating <span class="hint">out of 10</span></label>
+            <input id="rating" name="rating" type="number" inputmode="decimal" min="0" max="10" step="0.1" required aria-describedby="rating-error">
+            <p class="error" id="rating-error"></p>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="image">Poster link <span class="hint">optional</span></label>
+          <input id="image" name="image" type="url" inputmode="url" placeholder="https://" autocomplete="off" aria-describedby="image-error">
+          <p class="error" id="image-error"></p>
+        </div>
+
+        <label class="check">
+          <input type="checkbox" id="auto-poster" checked>
+          <span>Look up a poster on Wikipedia when the link is blank</span>
+        </label>
+
+        <p class="form-message" id="form-message" role="alert"></p>
+
+        <div class="actions">
+          <button type="submit" class="btn primary" id="submit-btn">Add movie</button>
+          <button type="button" class="btn quiet" id="cancel-btn" hidden>Cancel</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="collection" aria-labelledby="collection-title">
+      <div class="collection-head">
+        <h2 id="collection-title">Collection</h2>
+        <span class="count" id="count"></span>
+        <button type="button" class="btn quiet small" id="posters-btn" hidden>Find missing posters</button>
+      </div>
+
+      <div class="filters" role="search">
+        <label class="sr" for="search">Search titles</label>
+        <input id="search" type="search" placeholder="Search titles" autocomplete="off">
+        <label class="sr" for="genre-filter">Genre</label>
+        <select id="genre-filter">
+          <option value="">All genres</option>
+        </select>
+        <label class="sr" for="sort">Sort by</label>
+        <select id="sort">
+          <option value="added">Order added</option>
+          <option value="title">Title A–Z</option>
+          <option value="rating">Highest rated</option>
+          <option value="year_new">Newest first</option>
+          <option value="year_old">Oldest first</option>
+        </select>
+      </div>
+
+      <ul class="grid" id="grid"></ul>
+      <p class="empty" id="empty" hidden></p>
+    </section>
+  </main>
+
+  <footer class="wrap footer">
+    <p>Every change is saved by the C server to <code>data/movies.dat</code>. Posters are looked up on Wikipedia and need an internet connection.</p>
+  </footer>
+
+  <dialog id="confirm" aria-labelledby="confirm-title">
+    <form method="dialog">
+      <h3 id="confirm-title">Delete this movie?</h3>
+      <p>It will be unlinked from the list, freed, and removed from movies.dat.</p>
+      <div class="actions">
+        <button value="cancel" class="btn quiet">Keep it</button>
+        <button value="delete" class="btn danger">Delete</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

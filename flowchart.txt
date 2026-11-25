@@ -1,0 +1,87 @@
+CINEVAULT - FLOWCHARTS
+======================
+
+1. ADD MOVIE
+------------
+                  START
+                    |
+                    v
+           Enter movie details
+       (title, genre, year, rating)
+                    |
+                    v
+             Validate input  ----------------------+
+          (browser, then validate_movie() in C)    |
+                    |                              |
+              +-----+-----+                        |
+              |  Valid?   |                        |
+              +-----+-----+                        |
+               /         \                         |
+             No           Yes                      |
+              |            |                       |
+              v            v                       |
+        Show error    Already in collection? --Yes-+--> Show "already in your collection"
+        under field        | No
+              |            v
+              |      create_movie()  -> malloc a new node
+              |            |
+              |            v
+              |      Store details in the node, next = NULL
+              |            |
+              |            v
+              |      insert_movie()  -> walk to the tail, link it
+              |            |
+              |            v
+              |      save_movies()   -> write data/movies.dat
+              |            |
+              +------------+
+                    |
+                    v
+          Display updated collection
+                    |
+                    v
+                   END
+
+
+2. GENERAL REQUEST FLOW
+-----------------------
+  Browser
+    |  HTTP request
+    v
+  C HTTP server (select loop, reads the full request)
+    |
+    v
+  Route: /api/... -> movie function      other paths -> file from public/
+    |
+    v
+  Singly linked list
+    |
+    +----> data/movies.dat (only when the list changed)
+    |
+    v
+  HTTP response (JSON or file)
+    |
+    v
+  Browser updates the page
+
+
+3. DELETE MOVIE
+---------------
+  START -> find node by id -> not found? -> 404 "isn't in the collection any more"
+                |
+                v
+        detach_movie(): prev->next = node->next   (or head = node->next)
+                |
+                v
+        save_movies() -- fails? --> relink_movie() puts the node back -> show error
+                |
+                v
+        free(node) -> respond {"deleted": id} -> END
+
+
+4. STARTUP AND SHUTDOWN
+-----------------------
+  Start -> open data/movies.dat if it exists -> read each line
+        -> create_movie() + insert_movie() for each record -> head is set
+        -> start HTTP server on port 8080 -> serve requests
+        -> Ctrl+C -> close sockets -> free_movies() -> Stop

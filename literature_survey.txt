@@ -1,0 +1,26 @@
+CINEVAULT - LITERATURE SURVEY AND GAP IDENTIFICATION
+====================================================
+
+System              Main features                   Approach                   Limitation                       Gap addressed by CineVault
+------------------  ------------------------------  -------------------------  -------------------------------  ----------------------------------------
+IMDb                Movie info, ratings, reviews,   Large online platform      Complex and online-oriented      Shows the core data structure in C
+                    search
+TMDB                Movies, posters, ratings,       Online API / database      Depends on external services     An academic, C-based implementation
+                    metadata
+Letterboxd          Tracking, ratings, watchlists   Web platform               Strong focus on social features  Focuses on C data structures and files
+Personal movie DB   Storage and retrieval           Usually database-based     Database setup may be required   Uses a singly linked list and a local file
+CineVault           Movie collection management     C + linked list + file     Academic-scale prototype         Combines a practical web UI with
+                                                    handling + web UI                                           fundamental C concepts
+
+
+RESEARCH GAP
+------------
+Existing movie-management systems emphasise online databases, APIs, cloud
+services, user accounts and social features. CineVault meets a different
+academic need: showing how a practical movie-management application can be
+built with C, a singly linked list, dynamic memory allocation and persistent
+file storage, while still offering a usable web interface.
+
+Gap statement: there is a gap in simple academic movie-management systems that
+demonstrate a practical web application built with C and a singly linked list
+with persistent file storage. CineVault fills it with a working prototype.

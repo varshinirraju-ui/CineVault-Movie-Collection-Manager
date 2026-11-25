@@ -1,0 +1,25 @@
+CINEVAULT - PHASE 2 GANTT CHART
+===============================
+
+Activity                              Week 1  Week 2  Week 3  Week 4  Week 5
+------------------------------------  ------  ------  ------  ------  ------
+Complete C modules                     ####    ####
+Search / Update / Delete                       ####    ####
+File handling and persistence                  ####    ####
+Web - C integration                                    ####    ####
+Poster / API integration                                       ####
+Testing and debugging                                          ####    ####
+Final documentation                                                    ####
+Final presentation                                                     ####
+
+
+PHASE 2 MILESTONES
+------------------
+[x] Complete remaining movie-management operations (search, update, delete, sort)
+[x] Refine linked-list handling and validation
+[x] Test file persistence after restart
+[x] Complete frontend-backend integration
+[x] Automatic poster lookup with fallback
+[ ] Functional and error testing on the lab machines (use the checklist in README.md)
+[ ] Final report, screenshots and presentation
+[ ] Final demonstration and viva answers

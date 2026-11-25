@@ -1,0 +1,32 @@
+CINEVAULT - PROBLEM STATEMENT AND OBJECTIVES
+============================================
+
+PROBLEM STATEMENT
+-----------------
+Managing a personal movie collection by hand makes it hard to organise and
+maintain movie information. Existing movie platforms are large online systems
+that rely on databases, APIs and complex infrastructure. An academic project
+needs a simpler system that shows how fundamental C programming concepts and
+data structures apply to a practical movie-management application.
+
+CineVault addresses this with a movie collection manager built in C on a singly
+linked list with file handling, supported by a web interface.
+
+
+TARGET USERS
+------------
+- Students learning C programming and data structures
+- Users keeping a personal movie collection
+- Beginners who want to understand linked-list-based applications
+- Academic users who need a practical demonstration of C concepts
+
+
+OBJECTIVES
+----------
+O1 Movie management   Store movie title, genre, release year and rating.
+O2 Singly linked list Keep the collection in a dynamic singly linked list.
+O3 File handling      Store movie information permanently in a local data file.
+O4 Web interface      Provide an attractive, easy-to-use web interface.
+O5 C backend          Connect the web interface to C through a lightweight HTTP server.
+O6 Practical learning Demonstrate structures, pointers, dynamic memory allocation,
+                      linked lists, file handling and HTTP communication.

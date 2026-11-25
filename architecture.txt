@@ -1,0 +1,65 @@
+CINEVAULT - SYSTEM ARCHITECTURE
+===============================
+
+                         USER
+                           |
+                           v
+                 +--------------------+
+                 |    WEB BROWSER     |
+                 |  HTML / CSS / JS   |   public/index.html, css/style.css, js/app.js
+                 +---------+----------+
+                           |  HTTP (fetch, form-urlencoded in, JSON out)
+                           v
+                 +--------------------+
+                 |   C HTTP SERVER    |   server.c  (Winsock on Windows, POSIX sockets elsewhere)
+                 |     Port 8080      |
+                 +---------+----------+
+                           |  function calls
+                           v
+                 +--------------------+
+                 |  MOVIE FUNCTIONS   |   movies.c / movies.h
+                 |        C           |
+                 +---------+----------+
+                           |
+                           v
+                 +--------------------+
+                 | SINGLY LINKED LIST |   Movie *head -> node -> node -> NULL
+                 +---------+----------+
+                           |  fopen / fprintf / fgets
+                           v
+                 +--------------------+
+                 |  data/movies.dat   |   one movie per line: id|title|genre|year|rating|image
+                 +--------------------+
+
+
+COMPONENTS
+----------
+Web browser          Shows CineVault and collects user input.
+HTML/CSS/JavaScript  Interface, styling, form validation, API requests, poster lookup.
+C HTTP server        Accepts connections, parses requests, serves files and JSON.
+Movie functions      Create, insert, find, update, delete, filter, sort, statistics.
+Singly linked list   Holds every Movie node in memory, in the order added.
+movies.dat           Keeps the collection between runs.
+
+
+HTTP API (server.c)
+-------------------
+GET    /                          index.html (and other files under public/)
+GET    /api/movies?q=&genre=&sort= list with search, genre filter and sort
+                                  sort = added | title | rating | year_new | year_old
+POST   /api/movies                add a movie   (title, genre, year, rating, image)
+GET    /api/movies/{id}           one movie
+PUT    /api/movies/{id}           update a movie
+DELETE /api/movies/{id}           delete a movie
+GET    /api/stats                 total, average rating, top rated, genre counts, year range
+GET    /api/list                  every node with its real memory address and next pointer
+
+Errors come back as {"error": "...", "field": "..."} with status 400, 404, 405 or 409.
+
+
+SERVER LOOP
+-----------
+The server is single-threaded. select() watches the listening socket and every
+open connection, so a browser that opens a connection without sending anything
+cannot block other requests. The linked list is only touched from this one
+thread, so it needs no locks.
